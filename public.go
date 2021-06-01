@@ -155,6 +155,16 @@ func (c *Config) GetConfig() {
 }
 
 // UpdateConfigValue updates a value in the /.cfg/.all config file.
+// parent is the name of the section (header). it should be blank, if
+// if there is not section name.
+// e.g.
+//   The following has no parent.
+// 		hostname         localhost
+//
+//   and this one has a parent name and key/value
+//       TLS
+//          cert /usr/local/mydomain/appdata/tls/certx.pem
+//          key /usr/local/mydomain/appdata/tls/keyx.pem
 func (c *Config) UpdateConfigValue(parent string, key string, newValue string) {
 
 	f, err := ioutil.ReadFile(c.ConfigFilePath)
