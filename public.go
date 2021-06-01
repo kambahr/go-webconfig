@@ -68,7 +68,7 @@ func (c *Config) GetConfig() {
 		if c.skipLine(l) {
 			continue
 		}
-		// Values could be any where in the filc.
+		// Values could be any where in the file.
 		if strings.HasPrefix(l, "hostname") {
 			c.HostName = c.parseCofigLine(l, "hostname")
 
@@ -154,7 +154,7 @@ func (c *Config) GetConfig() {
 	}
 }
 
-// UpdateConfigValue updates a value in the /.cfg/.all config file
+// UpdateConfigValue updates a value in the /.cfg/.all config file.
 func (c *Config) UpdateConfigValue(parent string, key string, newValue string) {
 
 	f, err := ioutil.ReadFile(c.ConfigFilePath)
