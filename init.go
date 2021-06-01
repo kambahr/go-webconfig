@@ -20,6 +20,11 @@ func NewWebConfig(webRootPath string) *Config {
 	}
 	c.ConfigFilePath = fmt.Sprintf("%s/.cfg/.all", c.AppDataPath)
 
+	cfgDir := fmt.Sprintf("%s/.cfg", c.AppDataPath)
+	if !c.fileOrDirExists(cfgDir) {
+		os.Mkdir(cfgDir, os.ModePerm)
+	}
+
 	certDir := fmt.Sprintf("%s/appdata/certs", c.WebRootPath)
 	if !c.fileOrDirExists(certDir) {
 		os.Mkdir(certDir, os.ModePerm)
