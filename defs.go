@@ -115,7 +115,7 @@ proto            http
 # This will s the entire site; used for times that the whole
 # site needs to be worked on. Your app will have to response 
 # to requests (and display a maint-page) accordingly.
-maintenance-window     on
+maintenance-window     off
  
 # location of certificate and private files;
 # both in the PEM format and must be full path.
