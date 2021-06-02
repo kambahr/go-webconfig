@@ -92,11 +92,14 @@ const (
 # About this config
 #   --delimiter between key and value is space (one or many).
 #   --comment must be at the begining of the line with a #.
-#   --one key/valuee per line.
-#   --keys are in lowercase.
-#   --to continue to another line, place a backslash (\) at the end 
-#      of the statement.
-#   
+#   --one key/valuee per line; to continue to another line, 
+#     place a backslash (\) at the end of the statement.
+#   --The headers and keys are case- insensitive, but the
+#     following is the recommanded format:
+#        SomeHeaderName
+#           key_1  value_1
+#     All entries can appear with or without a header.      
+#    
 #   Some of the config values are directely related to implmentation
 #   of feature within a Go website. Please, see the following template
 #   for implementation of these feature.
@@ -106,13 +109,10 @@ const (
 # This is the hostname that will be accessed from outside
 # i.e. mydomain.com.
 hostname         localhost
-
-# Ignored if port numbered is passed as a cmdline arg: --portno.
-# Note that when run as a service --portno arg is used.
 portno           1265
 proto            http
 
-# This will s the entire site; used for times that the whole
+# This will affect the entire site; used for times that the whole
 # site needs to be worked on. Your app will have to response 
 # to requests (and display a maint-page) accordingly.
 maintenance-window     off
@@ -122,8 +122,8 @@ maintenance-window     off
 # The paths can be an local paths; but 
 # /appdata/certs/<domain anme>/ is recommended.
 TLS 
-   #cert /usr/local/mydomain/appdata/tls/certx.pem
-   #key /usr/local/mydomain/appdata/tls/keyx.pem
+   #cert /usr/local/mywebapp dir/appdata/certs/mydomain/certx.pem
+   #key /usr/local/webapp dir/appdata/certs/mydomain/keyx.pem
 
 Admin
    # List of ip address that will be allowed to access 
@@ -182,9 +182,7 @@ HTTP
 # ip addresses in this file will be blocked from connecting the website.
 # the following is the format:
 # <ip address><minimum of one space><description>
-# Examples:
-# 10.12.3.4 Tried to reach a config path
-# 10.12.3.4 Too frequent calls
-# 10.12.3.4 Spoof attempt for /admin, /.env, wp- paths (bad intentions)
+# Example:
+# 10.12.3.4 <a short descrription of the reason>
 `
 )
