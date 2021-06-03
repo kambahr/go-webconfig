@@ -107,7 +107,7 @@ const (
 #----------------------------------------------------------------------
 
 # This is the hostname that will be accessed from the outside
-# i.e. mydomain.com. It many still be localhost if the website is
+# i.e. mydomain.com. It may still be localhost if the website is
 # on a loadbalancer.
 hostname         localhost
 portno           1265
