@@ -1,31 +1,31 @@
 package webconfig
 
 type messageBanner struct {
-	On               bool
-	SecondsToDisplay int
+	On               bool `json:"on"`
+	SecondsToDisplay int  `json:"seconds-to-display"`
 
 	// When the value of On chnages from false to true
 	// Tickout is set to SecondsToDisplay and then
 	// decremented every second until the banner is closed
 	// (on set to false).
-	TickCount int
+	TickCount int `json:"tick-count"`
 }
 
 type httpx struct {
-	AllowedMethods []string
+	AllowedMethods []string `json:"allowed-methods"`
 }
 
 // tlsFiles defines the location of the certificate and
 // private-key fiels. Both files must be
 // in PEM format.
 type tlsFiles struct {
-	CertFilePath string
-	KeyFilePath  string
+	CertFilePath string `json:"cert-file-path"`
+	KeyFilePath  string `json:"key-file-path"`
 }
 type urlPaths struct {
-	Restrict []string
-	Forward  []string
-	Exclude  []string
+	Restrict []string `json:"restrict"`
+	Forward  []string `json:"forward"`
+	Exclude  []string `json:"exclude"`
 }
 
 // admin defines the ip addresses
@@ -37,9 +37,9 @@ type urlPaths struct {
 // machine or ssh tunnel) or a list of recognized
 // ip addresses.
 type admin struct {
-	RunOnStartup bool `json:"run-on-sartup"`
-	PortNo       uint `json:"port-no"`
-	AllowedIP    []string
+	RunOnStartup bool     `json:"run-on-sartup"`
+	PortNo       uint     `json:"port-no"`
+	AllowedIP    []string `json:"allowed-ip"`
 }
 
 // siteStats holds the basic stat that can be
@@ -48,9 +48,9 @@ type admin struct {
 // idel, and new states must be set and udated by
 // the web server.
 type siteStats struct {
-	Active uint
-	Idle   uint
-	New    uint
+	Active uint `json:"active"`
+	Idle   uint `json:"idle"`
+	New    uint `json:"new"`
 }
 
 // Config is defines the fields that are typicaly required for
@@ -63,29 +63,24 @@ type Config struct {
 	ConnStat           siteStats `json:"conn-stat"`
 	ConfigFilePath     string    `json:"config-file-path"`
 	ConfigFileLastHash string    `json:"config-file-last-hash"`
-	Admin              admin     `json:"admin-ui"`
-	HTTP               httpx
+	Admin              admin     `json:"admin"`
+	HTTP               httpx     `json:"http"`
 
-	URLPaths urlPaths
+	URLPaths urlPaths `json:"url-paths"`
 
 	// These are the offender ip addr. Their connections
 	// are drop immedietely, without any message returned to them.
 	BlockedIP []string `json:"blocked-ip"`
 
-	// Admin pages are only accessable from the local machine,
-	// unless the ip of the remote machine is added to this array.
-	//
-	//Admin admin
+	RedirectHTTPtoHTTPS bool `json:"redirect-http-to-https"`
 
-	RedirectHTTPtoHTTPS bool
-
-	MaintenanceWindowOn bool
+	MaintenanceWindowOn bool `json:"maintenance-window0on"`
 
 	MessageBanner messageBanner
-	HostName      string
-	Proto         string
-	PortNo        int
-	TLS           tlsFiles
+	HostName      string   `json:"hostname"`
+	Proto         string   `json:"proto"`
+	PortNo        int      `json:"portno"`
+	TLS           tlsFiles `json:"tls"`
 }
 
 const (
