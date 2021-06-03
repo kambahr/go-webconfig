@@ -223,4 +223,7 @@ lblDone:
 			fmt.Println(err)
 		}
 	}
+
+	// Refresh
+	c.GetConfig()
 }
