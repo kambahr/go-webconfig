@@ -100,23 +100,19 @@ const (
 #           key_1  value_1
 #     All entries can appear with or without a header.      
 #    
-#   Some of the config values are directely related to implmentation
+#   Some of the config values are directely related to implementation
 #   of feature within a Go website. Please, see the following template
 #   for implementation of these feature.
 #   https://github.com/kambahr/go-webstandard
 #----------------------------------------------------------------------
 
-# This is the hostname that will be accessed from outside
-# i.e. mydomain.com.
+# This is the hostname that will be accessed from the outside
+# i.e. mydomain.com. It many still be localhost if the website is
+# on a loadbalancer.
 hostname         localhost
 portno           1265
 proto            http
 
-# This will affect the entire site; used for times that the whole
-# site needs to be worked on. Your app will have to response 
-# to requests (and display a maint-page) accordingly.
-maintenance-window     off
- 
 # location of certificate and private files;
 # both in the PEM format and must be full path.
 # The paths can be an local paths; but 
@@ -125,6 +121,11 @@ TLS
    #cert /usr/local/mywebapp dir/appdata/certs/mydomain/certx.pem
    #key /usr/local/webapp dir/appdata/certs/mydomain/keyx.pem
 
+# This will affect the entire site; used for times that the whole
+# site needs to be worked on. Your app will have to response 
+# to requests (and display a maint-page) accordingly.
+maintenance-window     off
+ 
 Admin
    # List of ip address that will be allowed to access 
    # the admin module; separated by comma; otherwise, the admin
@@ -172,8 +173,7 @@ URLPaths
    forward-paths  /along-name-of-a-blog-page|/latest-blog, /another-along-name-of-a-blog-page|/best-of-blogs, \ 
               /and-more-and-more-pages|/yet-the-best-blog
 
-# If GET is omitted; the master page will still be written to the
-# response with error 405.
+# HEAD and GET are generally allowed by default.
 HTTP
    allowed-methods     GET, OPTIONS, CONNECT, HEAD
    
