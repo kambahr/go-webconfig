@@ -4,7 +4,7 @@
 go-webconfig is a free-syle text-based config helper with built-in type and events.
 
 ### Usage
-Create an instance and starting using the Config type.
+Create an instance and start using the Config type.
 
 ``` go
 	Config *webconfig.Config
