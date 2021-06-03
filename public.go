@@ -1,6 +1,7 @@
 package webconfig
 
 import (
+	"encoding/json"
 	"fmt"
 	"io/ioutil"
 	"log"
@@ -15,6 +16,22 @@ import (
 // and fills-in the build-in fields accordingly.
 func (c *Config) Refresh() {
 	c.GetConfig()
+}
+
+// GetJSON returns json of the Config struct.
+func (c *Config) GetJSON() string {
+	b, err := json.Marshal(&c)
+	if err != nil {
+		fmt.Println(err)
+		return ""
+	}
+
+	s := fmt.Sprintf("%s", string(b))
+
+	s = strings.ReplaceAll(s, "\\u003e", ">")
+	s = strings.ReplaceAll(s, "\\u003c", "<")
+
+	return s
 }
 
 // GetConfig reads config values from file /appdata/.cfg.
@@ -91,7 +108,12 @@ func (c *Config) GetConfig() {
 		} else if strings.ToLower(l) == "tls" {
 			keys := []string{"cert", "key"}
 			i++
-			i = c.getConfigLeaves(line, i, keys)
+			i = c.getConfigLeaves(line, i, "tls", keys)
+
+		} else if strings.ToLower(l) == "configui" {
+			keys := []string{"run-on-startup", "portno"}
+			i++
+			i = c.getConfigLeaves(line, i, "configui", keys)
 
 		} else if strings.HasPrefix(l, "redirect-http-to-https") {
 
@@ -105,25 +127,25 @@ func (c *Config) GetConfig() {
 
 			keys := []string{"display-mode", "seconds-to-display"}
 			i++
-			i = c.getConfigLeaves(line, i, keys)
+			i = c.getConfigLeaves(line, i, "MessageBanner", keys)
 
 		} else if strings.ToLower(l) == strings.ToLower("HTTP") {
 
 			keys := []string{"allowed-methods"}
 			i++
-			i = c.getConfigLeaves(line, i, keys)
+			i = c.getConfigLeaves(line, i, "HTTP", keys)
 
 		} else if strings.ToLower(l) == strings.ToLower("admin") {
 
 			keys := []string{"allowed-ip-addr"}
 			i++
-			i = c.getConfigLeaves(line, i, keys)
+			i = c.getConfigLeaves(line, i, "admin", keys)
 
 		} else if strings.ToLower(l) == strings.ToLower("URLPaths") {
 
 			keys := []string{"restrict-paths", "exclude-paths", "forward-paths"}
 			i++
-			i = c.getConfigLeaves(line, i, keys)
+			i = c.getConfigLeaves(line, i, "URLPaths", keys)
 		}
 	}
 

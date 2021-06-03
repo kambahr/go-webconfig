@@ -29,7 +29,7 @@ type urlPaths struct {
 }
 
 // admin defines the ip addresses
-// of machiens that connect to the server.
+// of machins that connect to the server.
 // The admin pages (or app), whether hosted inside
 // the public site or in a separete environment
 // should be secured as such that it would be only
@@ -37,7 +37,9 @@ type urlPaths struct {
 // machine or ssh tunnel) or a list of recognized
 // ip addresses.
 type admin struct {
-	AllowedIP []string
+	RunOnStartup bool `json:"run-on-sartup"`
+	PortNo       uint `json:"port-no"`
+	AllowedIP    []string
 }
 
 // siteStats holds the basic stat that can be
@@ -55,25 +57,25 @@ type siteStats struct {
 // web configuration.  All config values have to have a
 // presentation in this struct.
 type Config struct {
-	refreshRate        uint // in seconds
-	WebRootPath        string
-	AppDataPath        string
-	ConnStat           siteStats
-	ConfigFilePath     string
-	ConfigFileLastHash string
-
-	HTTP httpx
+	refreshRate        uint      // in seconds
+	WebRootPath        string    `json:"web-rootp-path"`
+	AppDataPath        string    `json:"appdata-path"`
+	ConnStat           siteStats `json:"conn-stat"`
+	ConfigFilePath     string    `json:"config-file-path"`
+	ConfigFileLastHash string    `json:"config-file-last-hash"`
+	Admin              admin     `json:"admin-ui"`
+	HTTP               httpx
 
 	URLPaths urlPaths
 
 	// These are the offender ip addr. Their connections
 	// are drop immedietely, without any message returned to them.
-	BlockedIP []string
+	BlockedIP []string `json:"blocked-ip"`
 
 	// Admin pages are only accessable from the local machine,
 	// unless the ip of the remote machine is added to this array.
 	//
-	Admin admin
+	//Admin admin
 
 	RedirectHTTPtoHTTPS bool
 
@@ -128,9 +130,11 @@ maintenance-window     off
  
 Admin
    # List of ip address that will be allowed to access 
-   # the admin module; separated by comma; otherwise, the admin
+   # the admin website; separated by comma; otherwise, the admin
    # section of the website will only be served to the local machine.
-   allowed-ip-addr  <ip add 1>, <ip add 2>
+   allowed-ip-addr	<ip add 1>, <ip add 2>
+   run-on-startup	yes          
+   portno			3000
 
 # This message shows up on every request (page).
 # Users can dismiss the banner; their option is save in 
