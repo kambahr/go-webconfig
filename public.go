@@ -6,7 +6,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"strconv"
 	"strings"
 
 	"github.com/kambahr/go-mathsets"
@@ -32,6 +31,30 @@ func (c *Config) GetJSON() string {
 	s = strings.ReplaceAll(s, "\\u003c", "<")
 
 	return s
+}
+
+// hasSection check for the line(s) above to see if there
+// a section.
+func (c *Config) hasSection(lines []string, pos int) bool {
+
+	x := pos - 1
+	for {
+		if x < 1 {
+			break
+		}
+		l := strings.Trim(lines[x], " ")
+		if c.skipLine(l) {
+			x--
+			continue
+		}
+		v := strings.Split(l, " ")
+		if len(v) < 2 {
+			return true
+		}
+		x--
+	}
+
+	return false
 }
 
 // GetConfig reads config values from file /appdata/.cfg.
@@ -79,24 +102,16 @@ func (c *Config) GetConfig() {
 
 		line = append(line, linex[i])
 	}
-	for i := 0; i < len(line); i++ {
 
+	for i := 0; i < len(line); i++ {
 		l := strings.Trim(line[i], " ")
-		if c.skipLine(l) {
+		if c.skipLine(l) || l == "" {
 			continue
 		}
-		// Values could be any where in the file.
-		if strings.HasPrefix(l, "hostname") {
-			c.HostName = c.parseCofigLine(l, "hostname")
 
-		} else if strings.HasPrefix(l, "portno") {
-			s := c.parseCofigLine(l, "portno")
-			c.PortNo, _ = strconv.Atoi(s)
+		lLower := strings.ToLower(l)
 
-		} else if strings.HasPrefix(l, "proto") {
-			c.Proto = strings.ToUpper(c.parseCofigLine(l, "proto"))
-
-		} else if strings.HasPrefix(l, "maintenance-window") {
+		if strings.HasPrefix(lLower, "maintenance-window") {
 			s := strings.ToLower(c.parseCofigLine(l, "maintenance-window"))
 
 			if s == "on" {
@@ -104,18 +119,22 @@ func (c *Config) GetConfig() {
 			} else {
 				c.MaintenanceWindowOn = false
 			}
+		} else if strings.HasPrefix(lLower, "site") {
+			keys := []string{"hostname", "portno", "proto"}
+			i++
+			i = c.getConfigLeaves(line, i, "site", keys)
 
-		} else if strings.ToLower(l) == "tls" {
+		} else if strings.HasPrefix(lLower, "tls") {
 			keys := []string{"cert", "key"}
 			i++
 			i = c.getConfigLeaves(line, i, "tls", keys)
 
-		} else if strings.ToLower(l) == "configui" {
-			keys := []string{"run-on-startup", "portno"}
+		} else if strings.HasPrefix(lLower, "admin") {
+			keys := []string{"allowed-ip-addr", "run-on-startup", "portno"}
 			i++
-			i = c.getConfigLeaves(line, i, "configui", keys)
+			i = c.getConfigLeaves(line, i, "admin", keys)
 
-		} else if strings.HasPrefix(l, "redirect-http-to-https") {
+		} else if strings.HasPrefix(lLower, "redirect-http-to-https") {
 
 			if strings.ToLower(c.parseCofigLine(l, "redirect-http-to-https")) == "yes" {
 				c.RedirectHTTPtoHTTPS = true
@@ -123,25 +142,19 @@ func (c *Config) GetConfig() {
 				c.RedirectHTTPtoHTTPS = false
 			}
 
-		} else if strings.ToLower(l) == strings.ToLower("MessageBanner") {
+		} else if strings.HasPrefix(lLower, "messagebanner") {
 
 			keys := []string{"display-mode", "seconds-to-display"}
 			i++
 			i = c.getConfigLeaves(line, i, "MessageBanner", keys)
 
-		} else if strings.ToLower(l) == strings.ToLower("HTTP") {
+		} else if strings.HasPrefix(lLower, "http") {
 
 			keys := []string{"allowed-methods"}
 			i++
 			i = c.getConfigLeaves(line, i, "HTTP", keys)
 
-		} else if strings.ToLower(l) == strings.ToLower("admin") {
-
-			keys := []string{"allowed-ip-addr"}
-			i++
-			i = c.getConfigLeaves(line, i, "admin", keys)
-
-		} else if strings.ToLower(l) == strings.ToLower("URLPaths") {
+		} else if strings.HasPrefix(lLower, "urlpaths") {
 
 			keys := []string{"restrict-paths", "exclude-paths", "forward-paths"}
 			i++
