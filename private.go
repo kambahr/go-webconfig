@@ -101,6 +101,7 @@ func (c *Config) getConfigLeaves(lines []string, i int, section string, keys []s
 
 	section = strings.ToLower(section)
 
+	// Make the keys lower
 	for j := 0; j < len(keys); j++ {
 		keys[j] = strings.ToLower(keys[j])
 	}
@@ -109,14 +110,20 @@ func (c *Config) getConfigLeaves(lines []string, i int, section string, keys []s
 		if i >= len(lines) {
 			return i
 		}
-		noValue := c.skipLine(lines[i])
-
-		if noValue {
-			i++
-			continue
+		for {
+			if i >= len(lines) {
+				return i
+			}
+			if c.skipLine(lines[i]) {
+				i++
+			} else {
+				break
+			}
+		}
+		if i >= len(lines) {
+			return i
 		}
 		l := c.trimLine(lines[i])
-
 		hitValue := false
 		for j := 0; j < len(keys); j++ {
 			if strings.HasPrefix(l, keys[j]) {
@@ -133,29 +140,49 @@ func (c *Config) getConfigLeaves(lines []string, i int, section string, keys []s
 		hitSection := false
 		x := i - 1
 		for {
+			if x < 1 {
+				break
+			}
+			if c.skipLine(lines[x]) {
+				x--
+				continue
+			}
 			sx := strings.ToLower(c.trimLine(lines[x]))
 			if sx == section {
 				hitSection = true
 				break
 			}
-			if x == 0 {
-				break
-			}
 			x--
 		}
 		if !hitSection {
+			i++
+			if i >= len(lines) {
+				return i
+			}
 			continue
 		}
 
-		if section == "tls" {
+		if section == "site" {
+			if strings.HasPrefix(l, "hostname") {
+				c.Site.HostName = c.parseCofigLine(l, "hostname")
+
+			} else if strings.HasPrefix(l, "portno") {
+				s := c.parseCofigLine(l, "portno")
+				c.Site.PortNo, _ = strconv.Atoi(s)
+
+			} else if strings.HasPrefix(l, "proto") {
+				c.Site.Proto = c.parseCofigLine(l, "proto")
+			}
+
+		} else if section == "tls" {
 			if strings.HasPrefix(l, "cert") {
+				// cert PEM file
 				c.TLS.CertFilePath = c.parseCofigLine(l, "cert")
 
 			} else if strings.HasPrefix(l, "key") {
+				// private key PEM file
 				c.TLS.KeyFilePath = c.parseCofigLine(l, "key")
 
-			} else if strings.HasPrefix(l, "key") {
-				c.TLS.KeyFilePath = c.parseCofigLine(l, "key")
 			}
 
 		} else if section == "admin" {
@@ -167,6 +194,11 @@ func (c *Config) getConfigLeaves(lines []string, i int, section string, keys []s
 				} else {
 					c.Admin.RunOnStartup = false
 				}
+			} else if strings.HasPrefix(l, "portno") {
+				s := c.parseCofigLine(l, "portno")
+				ix, _ := strconv.Atoi(s)
+				c.Admin.PortNo = uint(ix)
+
 			} else if strings.HasPrefix(l, "allowed-ip-addr") {
 				s := c.parseCofigLine(l, "allowed-ip-addr")
 				c.Admin.AllowedIP = strings.Split(s, ",")
