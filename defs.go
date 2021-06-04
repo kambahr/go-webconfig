@@ -53,6 +53,12 @@ type siteStats struct {
 	New    uint `json:"new"`
 }
 
+type site struct {
+	HostName string `json:"hostname"`
+	Proto    string `json:"proto"`
+	PortNo   int    `json:"portno"`
+}
+
 // Config is defines the fields that are typicaly required for
 // web configuration.  All config values have to have a
 // presentation in this struct.
@@ -76,11 +82,11 @@ type Config struct {
 
 	MaintenanceWindowOn bool `json:"maintenance-window0on"`
 
-	MessageBanner messageBanner
-	HostName      string   `json:"hostname"`
-	Proto         string   `json:"proto"`
-	PortNo        int      `json:"portno"`
-	TLS           tlsFiles `json:"tls"`
+	MessageBanner messageBanner `json:"messagebanner"`
+	HostName      string        `json:"hostname"`
+	Proto         string        `json:"proto"`
+	PortNo        int           `json:"portno"`
+	TLS           tlsFiles      `json:"tls"`
 }
 
 const (
@@ -88,7 +94,7 @@ const (
 # ------------------------------------------------------------------
 # About this config
 #   --delimiter between key and value is space (one or many).
-#   --comment must be at the begining of the line with a #.
+#   --comments must begin with #.
 #   --one key/valuee per line; to continue to another line, 
 #     place a backslash (\) at the end of the statement.
 #   --The headers and keys are case- insensitive, but the
@@ -106,9 +112,10 @@ const (
 # This is the hostname that will be accessed from the outside
 # i.e. mydomain.com. It may still be localhost if the website is
 # on a loadbalancer.
-hostname         localhost
-portno           1265
-proto            http
+Site
+	hostname         localhost
+	portno           8085
+	proto            http
 
 # location of certificate and private files;
 # both in the PEM format and must be full path.
@@ -129,7 +136,7 @@ Admin
    # section of the website will only be served to the local machine.
    allowed-ip-addr	<ip add 1>, <ip add 2>
    run-on-startup	yes          
-   portno			3000
+   portno			30000
 
 # This message shows up on every request (page).
 # Users can dismiss the banner; their option is save in 
