@@ -71,8 +71,8 @@ type Config struct {
 	ConfigFileLastHash string    `json:"config-file-last-hash"`
 	Admin              admin     `json:"admin"`
 	HTTP               httpx     `json:"http"`
-
-	URLPaths urlPaths `json:"url-paths"`
+	Site               site      `json:"site"`
+	URLPaths           urlPaths  `json:"url-paths"`
 
 	// These are the offender ip addr. Their connections
 	// are drop immedietely, without any message returned to them.
