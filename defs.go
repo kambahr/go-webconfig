@@ -184,7 +184,7 @@ URLPaths
 HTTP
    allowed-methods     GET, OPTIONS, CONNECT, HEAD
 
-# This secion holds user-data. The following is the format.
+# This section holds user-data. The following is the format.
 # Key...... no spaces
 # Value.... can include spaces.
 # The data value can be any text (hex, JSON, text, xml,..).
