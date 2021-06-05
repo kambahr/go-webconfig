@@ -82,11 +82,12 @@ type Config struct {
 
 	MaintenanceWindowOn bool `json:"maintenance-window0on"`
 
-	MessageBanner messageBanner `json:"messagebanner"`
-	HostName      string        `json:"hostname"`
-	Proto         string        `json:"proto"`
-	PortNo        int           `json:"portno"`
-	TLS           tlsFiles      `json:"tls"`
+	MessageBanner messageBanner     `json:"messagebanner"`
+	HostName      string            `json:"hostname"`
+	Proto         string            `json:"proto"`
+	PortNo        int               `json:"portno"`
+	TLS           tlsFiles          `json:"tls"`
+	Data          map[string]string `json:"data"`
 }
 
 const (
@@ -182,6 +183,18 @@ URLPaths
 # HEAD and GET are generally allowed by default.
 HTTP
    allowed-methods     GET, OPTIONS, CONNECT, HEAD
+
+# This secion holds user-data. The following is the format.
+# Key...... no spaces
+# Value.... can include spaces.
+# The data value can be any text (hex, JSON, text, xml,..).
+# The delimiter is a new-line.
+#
+# Examples:
+#     my-postgresql-conn-str  User ID=root;Password=pwd;Host=localhost;Port=5432;Database=mydb;Pooling=false;
+#     my-json-value           {"mylist":["v1","v2"]}
+#     my-hex-value            68656c6c6f206f75742074686572652e206775697461722069732074686520736f6e67
+Data
    
 `
 	cnfTemplateBlockedIP string = `

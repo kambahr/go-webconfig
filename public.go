@@ -57,6 +57,56 @@ func (c *Config) hasSection(lines []string, pos int) bool {
 	return false
 }
 
+// getData fills-in the Data section of the config.
+func (c *Config) getData(line []string) {
+
+	inx := -1
+	for i := 0; i < len(line); i++ {
+		l := strings.Trim(line[i], " ")
+		if c.skipLine(l) || l == "" {
+			continue
+		}
+		if strings.HasPrefix(strings.ToLower(l), "data") {
+			inx = i
+			break
+		}
+	}
+
+	if inx < 0 {
+		// Data section was not found
+		return
+	}
+
+	// Go forward one
+	inx++
+
+	// Get the count of the map
+	dataCount := 0
+	for i := inx; i < len(line); i++ {
+		l := strings.Trim(line[i], " ")
+		if c.skipLine(l) || l == "" {
+			continue
+		}
+		dataCount++
+	}
+
+	// Split each line: as left/right (key/vlaue) and append to the Data map
+	c.Data = make(map[string]string, dataCount)
+	for i := inx; i < len(line); i++ {
+		l := strings.Trim(line[i], " ")
+		if c.skipLine(l) || l == "" {
+			continue
+		}
+		v := strings.Split(line[i], " ")
+		key := v[0]
+		val := ""
+		for j := 2; j < len(v); j++ {
+			val = fmt.Sprintf("%s%s", val, v[j])
+		}
+		c.Data[key] = val
+	}
+}
+
 // GetConfig reads config values from file /appdata/.cfg.
 // All values are part of a struct so lingering text in the config
 // file will not be processed.
@@ -166,6 +216,8 @@ func (c *Config) GetConfig() {
 		c.MessageBanner.TickCount = c.MessageBanner.SecondsToDisplay
 		go c.setTimeoutResetMsgBanner()
 	}
+
+	c.getData(line)
 
 	// Get the offenders
 	blockedIPPath := fmt.Sprintf("%s/.cfg/blocked-ip", c.AppDataPath)
