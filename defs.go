@@ -82,12 +82,17 @@ type Config struct {
 
 	MaintenanceWindowOn bool `json:"maintenance-window0on"`
 
-	MessageBanner messageBanner     `json:"messagebanner"`
-	HostName      string            `json:"hostname"`
-	Proto         string            `json:"proto"`
-	PortNo        int               `json:"portno"`
-	TLS           tlsFiles          `json:"tls"`
-	Data          map[string]string `json:"data"`
+	MessageBanner messageBanner `json:"messagebanner"`
+
+	//-------------------------------------------------
+	// Delete these in version > v1.0.3 + 3
+	HostName string `json:"hostname"`
+	Proto    string `json:"proto"`
+	PortNo   int    `json:"portno"`
+	//-------------------------------------------------
+
+	TLS  tlsFiles          `json:"tls"`
+	Data map[string]string `json:"data"`
 }
 
 const (
