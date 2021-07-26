@@ -3,7 +3,6 @@ package webconfig
 import (
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
 	"log"
 	"os"
 	"strings"
@@ -100,8 +99,12 @@ func (c *Config) getData(line []string) {
 		v := strings.Split(line[i], " ")
 		key := v[0]
 		val := ""
-		for j := 2; j < len(v); j++ {
-			val = fmt.Sprintf("%s%s", val, v[j])
+		// account for multi-spaces between key and value.
+		for j := 1; j < len(v); j++ {
+			if v[j] != "" {
+				val = fmt.Sprintf("%s%s", val, v[j])
+				break
+			}
 		}
 		c.Data[key] = val
 	}
@@ -112,7 +115,7 @@ func (c *Config) getData(line []string) {
 // file will not be processed.
 func (c *Config) GetConfig() {
 
-	f, err := ioutil.ReadFile(c.ConfigFilePath)
+	f, err := ReadFile(c.ConfigFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
@@ -222,7 +225,7 @@ func (c *Config) GetConfig() {
 	// Get the offenders
 	blockedIPPath := fmt.Sprintf("%s/.cfg/blocked-ip", c.AppDataPath)
 	if c.fileOrDirExists(blockedIPPath) {
-		f, err := ioutil.ReadFile(blockedIPPath)
+		f, err := ReadFile(blockedIPPath)
 		if err != nil {
 			log.Fatal(err)
 		}
@@ -254,7 +257,7 @@ func (c *Config) GetConfig() {
 //          key /usr/local/mydomain/appdata/tls/keyx.pem
 func (c *Config) UpdateConfigValue(parent string, key string, newValue string) {
 
-	f, err := ioutil.ReadFile(c.ConfigFilePath)
+	f, err := ReadFile(c.ConfigFilePath)
 	if err != nil {
 		log.Fatal(err)
 	}
