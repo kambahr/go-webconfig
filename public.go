@@ -103,7 +103,6 @@ func (c *Config) getData(line []string) {
 		for j := 1; j < len(v); j++ {
 			if v[j] != "" {
 				val = fmt.Sprintf("%s%s", val, v[j])
-				break
 			}
 		}
 		c.Data[key] = val
