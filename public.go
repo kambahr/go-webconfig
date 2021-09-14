@@ -129,6 +129,12 @@ func (c *Config) GetConfig() {
 	linex := strings.Split(string(f), "\n")
 	var line []string
 
+	// Begin with a blank line. If the frist section is on the first line,
+	// it may be skipped.
+	if linex[0] != "" && linex[0] != "#" {
+		line = append(line, "")
+	}
+
 	// Put the continuation of lines together.
 	// Also remove tabs and trime lines.
 	for i := 0; i < len(linex); i++ {
