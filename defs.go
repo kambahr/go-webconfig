@@ -86,9 +86,10 @@ type Config struct {
 
 	//-------------------------------------------------
 	// Delete these in version > v1.0.3 + 3
-	HostName string `json:"hostname"`
-	Proto    string `json:"proto"`
-	PortNo   int    `json:"portno"`
+	// HostName string `json:"hostname"`
+	// Proto    string `json:"proto"`
+	// PortNo   int    `json:"portno"`
+	// [2021-09-24] Removed; moved to the Site type.
 	//-------------------------------------------------
 
 	TLS  tlsFiles          `json:"tls"`
