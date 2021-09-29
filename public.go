@@ -306,8 +306,25 @@ lblDone:
 	if err != nil {
 		log.Fatal(err)
 	}
-	for i := 0; i < len(line); i++ {
-		s := fmt.Sprintf("%s\n", line[i])
+
+	// Remove extra lines
+	var line2 []string
+	count := len(line)
+	for i := 0; i < count; i++ {
+		line[i] = strings.Trim(line[i], " ")
+		if line[i] == "" {
+			if (i + 1) >= count {
+				break
+			}
+			if line[i+1] == "" {
+				continue
+			}
+		}
+		line2 = append(line2, line[i])
+	}
+
+	for i := 0; i < len(line2); i++ {
+		s := fmt.Sprintf("%s\n", line2[i])
 		fx.WriteString(s)
 	}
 	err = fx.Close()
