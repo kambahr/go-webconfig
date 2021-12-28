@@ -7,8 +7,8 @@ go-webconfig is a free-syle text-based config helper with built-in type and even
 Create an instance and start using the Config type.
 
 ``` go
-	Config *webconfig.Config
-	Config = webconfig.NewWebConfig(<websites' full root path>)
+Config *webconfig.Config
+Config = webconfig.NewWebConfig(<websites' full root path>)
 ```
 
 ### Features
@@ -20,4 +20,13 @@ Create an instance and start using the Config type.
 - Common web settings + security, and URL management options.
 - Keeps a separate file for blocked IP addresses. 
 - Built-in timeout event to reset the Message Banner display value to off.
+- Built-in Request Validation; usage example:
+``` go
+isRequestValid, httpErrCode := Config.ValidateHTTPRequest(w, r)
 
+if httpErrCode == http.StatusTemporaryRedirect || httpErrCode == http.StatusBadGateway {
+    return
+} else {
+    // deal with the request according to the http error code
+}
+```
