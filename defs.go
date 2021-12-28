@@ -80,7 +80,7 @@ type Config struct {
 
 	RedirectHTTPtoHTTPS bool `json:"redirect-http-to-https"`
 
-	MaintenanceWindowOn bool `json:"maintenance-window0on"`
+	MaintenanceWindowOn bool `json:"maintenance-windowon"`
 
 	MessageBanner messageBanner `json:"messagebanner"`
 
@@ -178,13 +178,13 @@ URLPaths
    # with the exclude option, files will be intact in the same location, but not
    # served; the end-user will receive 404 error; or the behaviour can be 
    # customized.
-   exclude-paths /galleryx, /someotherpath
+   # exclude-paths /galleryx, /someotherpath
 
-   # forward-paths <url-from:url-to-forward paths separated by comma>.
-   # Note that forwarding to a fully qualified url must not be allowed.
+   # forward-paths <url-from|url-to-forward paths separated by comma>.
+   # Note that forwarding to a fully qualified url must not be allowed!
    # e.g.   
-   forward-paths  /along-name-of-a-blog-page|/latest-blog, /another-along-name-of-a-blog-page|/best-of-blogs, \ 
-              /and-more-and-more-pages|/yet-the-best-blog
+   # forward-paths  /along-name-of-a-blog-page|/latest-blog, /another-along-name-of-a-blog-page|/best-of-blogs, \ 
+   #           /and-more-and-more-pages|/yet-the-best-blog
 
 # HEAD and GET are generally allowed by default.
 HTTP
