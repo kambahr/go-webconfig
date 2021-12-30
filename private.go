@@ -1,6 +1,7 @@
 package webconfig
 
 import (
+	"encoding/json"
 	"fmt"
 	"log"
 	"os"
@@ -266,6 +267,9 @@ func (c *Config) getConfigLeaves(lines []string, i int, section string, keys []s
 					c.URLPaths.Exclude[j] = strings.TrimLeft(c.URLPaths.Exclude[j], " ")
 					c.URLPaths.Exclude[j] = strings.TrimRight(c.URLPaths.Exclude[j], " ")
 				}
+			} else if strings.HasPrefix(l, "conditional-http-service") {
+				s := c.parseCofigLine(l, "conditional-http-service")
+				json.Unmarshal([]byte(s), &c.URLPaths.ServeOnlyTo)
 			}
 		}
 

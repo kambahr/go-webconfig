@@ -33,7 +33,7 @@ func (c *Config) ValidateHTTPRequest(w http.ResponseWriter, r *http.Request) (bo
 		return false, http.StatusMethodNotAllowed
 	}
 
-	// This is the order: restrict-paths, exclude-path, forward-paths
+	// This is the order: restrict-paths, exclude-path, forward-paths, conditional-http-service
 
 	// restrict-paths
 	for i := 0; i < len(c.URLPaths.Restrict); i++ {
@@ -75,6 +75,51 @@ func (c *Config) ValidateHTTPRequest(w http.ResponseWriter, r *http.Request) (bo
 		if left == rPath {
 			http.Redirect(w, r, right, http.StatusTemporaryRedirect)
 			return false, http.StatusTemporaryRedirect
+		}
+	}
+
+	// conditional-http-service
+	ip := strings.Split(strings.Replace(strings.Replace(r.RemoteAddr, "[", "", -1), "]", "", -1), ":")[0]
+	qs := r.URL.RawQuery
+
+	for i := 0; i < len(c.URLPaths.ServeOnlyTo); i++ {
+		if rPath == c.URLPaths.ServeOnlyTo[i].URLPath {
+			// check headers
+			if c.URLPaths.ServeOnlyTo[i].RuleType == CondHTTPSvc_Header {
+				for _, v := range r.Header {
+					for j := 0; j < len(c.URLPaths.ServeOnlyTo[i].ServeOnlyToCriteria); j++ {
+						m := c.URLPaths.ServeOnlyTo[i].ServeOnlyToCriteria[j]
+						for k := 0; k < len(v); k++ {
+							if strings.Contains(v[k], m) {
+								// The caller can view the page - as its request header
+								// has a value that matches the ServerOnlyTo critiera
+								return true, 0
+							}
+						}
+					}
+				}
+			}
+
+			// check IP address and query string
+			for j := 0; j < len(c.URLPaths.ServeOnlyTo[i].ServeOnlyToCriteria); j++ {
+				if c.URLPaths.ServeOnlyTo[i].ServeOnlyToCriteria[j] == ip || strings.Contains(qs, c.URLPaths.ServeOnlyTo[i].ServeOnlyToCriteria[j]) {
+					// The caller can view the page - as its request header
+					// has a value that matches the ServerOnlyTo critiera
+					return true, 0
+				}
+			}
+
+			// If we get here, it means that:
+			//   1. there is a rule for the current r.Path
+			//   2. there is no match found to allow the client to recieve the content
+			// so, return error
+			errCode := c.URLPaths.ServeOnlyTo[i].HTTPStatusCode
+
+			if errCode < 1 {
+				errCode = 404 // default error code
+			}
+
+			return false, errCode
 		}
 	}
 

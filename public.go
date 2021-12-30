@@ -214,7 +214,7 @@ func (c *Config) GetConfig() {
 
 		} else if strings.HasPrefix(lLower, "urlpaths") {
 
-			keys := []string{"restrict-paths", "exclude-paths", "forward-paths"}
+			keys := []string{"restrict-paths", "exclude-paths", "forward-paths", "conditional-http-service"}
 			i++
 			i = c.getConfigLeaves(line, i, "URLPaths", keys)
 		}

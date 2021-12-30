@@ -1,5 +1,34 @@
 package webconfig
 
+const (
+	CondHTTPSvc_Header      = "header"
+	CondHTTPSvc_IPAddress   = "ip-address"
+	CondHTTPSvc_QueryString = "query-string"
+)
+
+// ConditionalHTTPService serves an HTTP request according to a
+// condition based on a value in the header, query string or
+// ip address.
+type ConditionalHTTPService struct {
+
+	// RuleType can be: header, query-string, or ip-address
+	RuleType string `json:"rule-type"`
+
+	// URLPath is the relative URL of the request; i.e. /robot.txt
+	URLPath string `json:"url-path"`
+
+	// ServeOnlyToCriteria are the related strings to match. i.e.,
+	// bingbot/2.0; +http://www.bing.com/bingbot.htm and
+	// Googlebot/2.1; +http://www.google.com/bot.html can be
+	// two string elements in the Vaues array that will be used to
+	// match in the Header (User-Agent). For example, if the target url
+	// is /robot.txt; it will only be served to google and bing bots.
+	ServeOnlyToCriteria []string `json:"serve-only-to-criteria"`
+
+	// HTTPStatusCode is http status code that will be retured, if
+	// a match is found. The default is 404 (not found).
+	HTTPStatusCode int `json:"http-status-code"`
+}
 type messageBanner struct {
 	On               bool `json:"on"`
 	SecondsToDisplay int  `json:"seconds-to-display"`
@@ -22,10 +51,12 @@ type tlsFiles struct {
 	CertFilePath string `json:"cert-file-path"`
 	KeyFilePath  string `json:"key-file-path"`
 }
+
 type urlPaths struct {
-	Restrict []string `json:"restrict"`
-	Forward  []string `json:"forward"`
-	Exclude  []string `json:"exclude"`
+	Restrict    []string                 `json:"restrict"`
+	Forward     []string                 `json:"forward"`
+	Exclude     []string                 `json:"exclude"`
+	ServeOnlyTo []ConditionalHTTPService `json:"conditional-http-service"`
 }
 
 // admin defines the IP addresses
@@ -169,22 +200,32 @@ MessageBanner
 # These option to make a portion of your site unavailable for maintenance
 # or other reasons. Each path must begin with a slash (relative path).
 # The following should be the order or evaluation: 
-#       restrict-paths, exclude-paths, forward-paths.
+# restrict-paths, exclude-paths, forward-paths, conditional-http-service.
 URLPaths
    # restrict-paths <url paths separated by comma>
    # e.g.
    # restrict-paths   /gallery,/accounting, /customer-review, /myblog
+   restrict-paths
 
    # with the exclude option, files will be intact in the same location, but not
    # served; the end-user will receive 404 error; or the behaviour can be 
    # customized.
    # exclude-paths /galleryx, /someotherpath
+   exclude-paths
 
    # forward-paths <url-from|url-to-forward paths separated by comma>.
-   # Note that forwarding to a fully qualified url must not be allowed!
+   # Note that forwarding to a fully qualified url must not be allowed.
    # e.g.   
    # forward-paths  /along-name-of-a-blog-page|/latest-blog, /another-along-name-of-a-blog-page|/best-of-blogs, \ 
    #           /and-more-and-more-pages|/yet-the-best-blog
+   forward-paths
+
+   # Conditional HTTP Service serves an HTTP request according to a
+   # condition based on a value in the header, query string or
+   # ip address. If a matching string is found the request will be
+   # e.g. the following only allows the bing and google bots see the robot.txt file.
+   # conditional-http-service [{"rule-type":"header","url-path":"/robot.txt","serve-only-to-criteria":["+http://www.bing.com/bingbot.htm","+http://www.google.com/bot.html"],"http-status-code":404}]
+   conditional-http-service
 
 # HEAD and GET are generally allowed by default.
 HTTP

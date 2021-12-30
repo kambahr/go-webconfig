@@ -20,6 +20,13 @@ Config = webconfig.NewWebConfig(<websites' full root path>)
 - Common web settings + security, and URL management options.
 - Keeps a separate file for blocked IP addresses. 
 - Built-in timeout event to reset the Message Banner display value to off.
+- Conditional HTTP Service based on ip address, header, and query string.
+The following example allows only bing and google bots to see /robot.txt:
+
+conditional-http-service [{"rule-type":"ip-address","url-path":"/robot.txt","serve-only-to-criteria":["+http://www.bing.com/bingbot.htm","+http://www.google.com/bot.html"],"http-status-code":404}]]
+
+See *ConditionalHTTPService* and *conditional-http-service* in defs.go
+
 - Built-in Request Validation; usage example:
 ``` go
 isRequestValid, httpErrCode := Config.ValidateHTTPRequest(w, r)
