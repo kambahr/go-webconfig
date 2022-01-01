@@ -16,7 +16,7 @@ func (c *Config) ValidateHTTPRequest(w http.ResponseWriter, r *http.Request) (bo
 
 	// Host name
 	rHost := strings.ToLower(strings.Split(r.Host, ":")[0])
-	if c.Site.HostName != "" && rHost != c.Site.HostName && rHost != "localhost" {
+	if c.Site.HostName != "" && rHost != c.Site.HostName && rHost != "localhost" && rHost != "127.0.0.1" {
 		return false, http.StatusBadGateway
 	}
 
