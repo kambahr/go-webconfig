@@ -17,7 +17,19 @@ func (c *Config) ValidateHTTPRequest(w http.ResponseWriter, r *http.Request) (bo
 	// Host name
 	rHost := strings.ToLower(strings.Split(r.Host, ":")[0])
 	if c.Site.HostName != "" && rHost != c.Site.HostName && rHost != "localhost" && rHost != "127.0.0.1" {
-		return false, http.StatusBadGateway
+
+		// Also check the alternate host names
+		ok := false
+		for i := 0; i < len(c.Site.AlternateHostNames); i++ {
+			if c.Site.AlternateHostNames[i] == rHost {
+				ok = true
+				break
+			}
+		}
+
+		if !ok {
+			return false, http.StatusBadGateway
+		}
 	}
 
 	// Method allowed

@@ -85,9 +85,10 @@ type siteStats struct {
 }
 
 type site struct {
-	HostName string `json:"hostname"`
-	Proto    string `json:"proto"`
-	PortNo   int    `json:"portno"`
+	HostName           string   `json:"hostname"`
+	AlternateHostNames []string `json:"alternate-host-names"`
+	Proto              string   `json:"proto"`
+	PortNo             int      `json:"portno"`
 }
 
 // Config is defines the fields that are typically required for
@@ -145,13 +146,17 @@ const (
 #   of feature within a Go website. Please, see the following template
 #   for implementation of these feature.
 #   https://github.com/kambahr/go-webstandard
-#----------------------------------------------------------------------
+# ----------------------------------------------------------------------
 
 # This is the hostname that will be accessed from the outside
 # i.e. mydomain.com. It may still be localhost if the website is
 # on a load balancer.
 Site
 	hostname         localhost
+    # alternate-hostnames can be a local or public hostname.
+	# e.g. myhost can be a local hostname, and mydomain.com 
+	# can be a public host name.
+	alternate-hostnames 
 	portno           8085
 	proto            http
 

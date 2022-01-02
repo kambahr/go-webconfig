@@ -178,7 +178,7 @@ func (c *Config) GetConfig() {
 				c.MaintenanceWindowOn = false
 			}
 		} else if strings.HasPrefix(lLower, "site") {
-			keys := []string{"hostname", "portno", "proto"}
+			keys := []string{"hostname", "alternate-hostnames", "portno", "proto"}
 			i++
 			i = c.getConfigLeaves(line, i, "site", keys)
 

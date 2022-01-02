@@ -167,6 +167,21 @@ func (c *Config) getConfigLeaves(lines []string, i int, section string, keys []s
 			if strings.HasPrefix(l, "hostname") {
 				c.Site.HostName = c.parseCofigLine(l, "hostname")
 
+			} else if strings.HasPrefix(l, "alternate-hostnames") {
+				// empty the array first
+				c.Site.AlternateHostNames = make([]string, 0)
+				s := c.parseCofigLine(l, "alternate-hostnames")
+				s = strings.Trim(s, " ")
+				if s != "" {
+					v := strings.Split(s, ",")
+					for i := 0; i < len(v); i++ {
+						if v[i] == "" {
+							continue
+						}
+						v[i] = strings.ToLower(strings.Trim(v[i], " "))
+						c.Site.AlternateHostNames = append(c.Site.AlternateHostNames, v[i])
+					}
+				}
 			} else if strings.HasPrefix(l, "portno") {
 				s := c.parseCofigLine(l, "portno")
 				c.Site.PortNo, _ = strconv.Atoi(s)
