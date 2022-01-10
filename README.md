@@ -37,3 +37,32 @@ if httpErrCode == http.StatusTemporaryRedirect || httpErrCode == http.StatusBadG
     // deal with the request according to the http error code
 }
 ```
+#### Commented JSON config
+Use comment lines using # at the begining of each line; and /* */ blocks 
+anywhere in the json block.
+```go
+func LoadJSONConfig(path string) (map[string]interface{}, []byte)
+```
+```
+# Top notes
+# some more text...
+{
+    # more notes...
+    "my-info":
+    [
+        # notes for object one
+        {        
+            # my comments...
+            "some-key" : "some value /* notes go here */",        
+                        
+            # notes for this key
+            "some-array" :
+            [
+                "value 1",
+                /* more notes */
+                "value 2"
+            ]
+        } 
+    ]
+}
+```

@@ -1,10 +1,13 @@
 package webconfig
 
 import (
+	"bytes"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
 	"log"
 	"os"
+	"quenubes/public/nexum/util"
 	"strings"
 
 	"github.com/kambahr/go-mathsets"
@@ -338,4 +341,79 @@ lblDone:
 
 	// Refresh
 	c.GetConfig()
+}
+
+//--------------------------------------------------------------
+
+// LoadJSONConfig loads json string containing comments into
+// a map[string]interface{}. Comment lines must begin with a #.
+// Use /* */ blocks to insert comments anywhere inside a JSON block.
+// In addition to the raw format, map[string]interface{}, the content
+// of the file is returned, in []byte (to unmarshall into a specific type).
+func LoadJSONConfig(path string) (map[string]interface{}, []byte) {
+	var jsonStrArry string
+
+	if !util.FileOrDirExists(path) {
+		log.Fatal("config file does not exist")
+	}
+
+	b, err := ioutil.ReadFile(path)
+	if err != nil {
+		log.Fatal(err.Error())
+	}
+	str := string(b)
+	lines := strings.Split(str, "\n")
+
+	for i := 0; i < len(lines); i++ {
+		s := strings.ReplaceAll(lines[i], "\t", "")
+		s = strings.ReplaceAll(s, "\n", "")
+		s = strings.Trim(s, " ")
+		if s == "" || strings.HasPrefix(s, "#") {
+			continue
+		}
+		jsonStrArry = fmt.Sprintf("%s%s", jsonStrArry, s)
+	}
+	jsonStrArry = RemovePhraseFromString(jsonStrArry, "/*", "*/")
+
+	b = []byte(jsonStrArry)
+	b = bytes.ReplaceAll(b, []byte(`\"`), []byte(`"`))
+
+	var m map[string]interface{}
+	json.Unmarshal(b, &m)
+
+	return m, b
+}
+
+// RemovePhraseFromString removes a phrase from a string.
+func RemovePhraseFromString(s string, begin string, end string) string {
+
+	begin = strings.Trim(begin, " ")
+	end = strings.Trim(end, " ")
+
+	// Avoid recursion by using a label to go through
+	// many iterations until all target blocks of text are removed.
+lblAgain:
+	i := strings.Index(s, begin)
+
+	if i < 0 {
+		// not found
+		return s
+	}
+
+	left := s[:i]
+
+	right := s[len(left):]
+
+	j := strings.Index(right, end)
+	right = right[j+len(end):]
+
+	s = fmt.Sprintf("%s%s", left, right)
+
+	i = strings.Index(s, begin)
+
+	if i > -1 {
+		goto lblAgain
+	}
+
+	return s
 }
