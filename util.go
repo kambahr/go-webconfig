@@ -18,7 +18,7 @@ func (c *Config) trimLine(l string) string {
 }
 
 // fileOrDirExists checks existance of file or directory.
-func (c *Config) fileOrDirExists(path string) bool {
+func fileOrDirExists(path string) bool {
 	if path == "" {
 		return false
 	}

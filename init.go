@@ -15,26 +15,26 @@ func NewWebConfig(webRootPath string) *Config {
 
 	// Create the appdata if it does not exist
 	c.AppDataPath = fmt.Sprintf("%s/appdata", c.WebRootPath)
-	if !c.fileOrDirExists(c.AppDataPath) {
+	if !fileOrDirExists(c.AppDataPath) {
 		os.Mkdir(c.AppDataPath, os.ModePerm)
 	}
 	c.ConfigFilePath = fmt.Sprintf("%s/.cfg/.all", c.AppDataPath)
 
 	cfgDir := fmt.Sprintf("%s/.cfg", c.AppDataPath)
-	if !c.fileOrDirExists(cfgDir) {
+	if !fileOrDirExists(cfgDir) {
 		os.Mkdir(cfgDir, os.ModePerm)
 	}
 
 	certDir := fmt.Sprintf("%s/appdata/certs", c.WebRootPath)
-	if !c.fileOrDirExists(certDir) {
+	if !fileOrDirExists(certDir) {
 		os.Mkdir(certDir, os.ModePerm)
 	}
 	selfcertDir := fmt.Sprintf("%s/appdata/certs/self", c.WebRootPath)
-	if !c.fileOrDirExists(selfcertDir) {
+	if !fileOrDirExists(selfcertDir) {
 		os.Mkdir(selfcertDir, os.ModePerm)
 	}
 
-	if !c.fileOrDirExists(c.ConfigFilePath) {
+	if !fileOrDirExists(c.ConfigFilePath) {
 		c.writeDefaultConfig()
 	}
 

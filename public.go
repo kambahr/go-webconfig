@@ -7,7 +7,6 @@ import (
 	"io/ioutil"
 	"log"
 	"os"
-	"quenubes/public/nexum/util"
 	"strings"
 
 	"github.com/kambahr/go-mathsets"
@@ -232,7 +231,7 @@ func (c *Config) GetConfig() {
 
 	// Get the offenders
 	blockedIPPath := fmt.Sprintf("%s/.cfg/blocked-ip", c.AppDataPath)
-	if c.fileOrDirExists(blockedIPPath) {
+	if fileOrDirExists(blockedIPPath) {
 		f, err := ReadFile(blockedIPPath)
 		if err != nil {
 			log.Fatal(err)
@@ -353,7 +352,7 @@ lblDone:
 func LoadJSONConfig(path string) (map[string]interface{}, []byte) {
 	var jsonStrArry string
 
-	if !util.FileOrDirExists(path) {
+	if !fileOrDirExists(path) {
 		log.Fatal("config file does not exist")
 	}
 
