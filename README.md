@@ -38,7 +38,7 @@ if httpErrCode == http.StatusTemporaryRedirect || httpErrCode == http.StatusBadG
 }
 ```
 #### Commented JSON config
-Use comment lines using # at the begining of each line; and /* */ blocks 
+Use comment lines using # at the beginning of each line, within a line ; and /* */ blocks 
 anywhere in the json block.
 ```go
 func LoadJSONConfig(path string) (map[string]interface{}, []byte)
@@ -58,7 +58,7 @@ func LoadJSONConfig(path string) (map[string]interface{}, []byte)
             # notes for this key
             "some-array" :
             [
-                "value 1",
+                "value 1",  # inline comment will also be omitted
                 /* more notes */
                 "value 2"
             ]

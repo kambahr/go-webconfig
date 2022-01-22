@@ -363,15 +363,29 @@ func LoadJSONConfig(path string) (map[string]interface{}, []byte) {
 	str := string(b)
 	lines := strings.Split(str, "\n")
 
+	var lines2 []string
+
 	for i := 0; i < len(lines); i++ {
-		s := strings.ReplaceAll(lines[i], "\t", "")
-		s = strings.ReplaceAll(s, "\n", "")
+		s := lines[i]
+
 		s = strings.Trim(s, " ")
+		s = strings.ReplaceAll(lines[i], "\t", "")
+
 		if s == "" || strings.HasPrefix(s, "#") {
 			continue
 		}
-		jsonStrArry = fmt.Sprintf("%s%s", jsonStrArry, s)
+
+		// take out the inline comments
+		v := strings.Split(s, "#")
+		if len(v) > 1 {
+			s = v[0]
+		}
+
+		lines2 = append(lines2, s)
 	}
+
+	jsonStrArry = strings.Join(lines2, "")
+
 	jsonStrArry = RemovePhraseFromString(jsonStrArry, "/*", "*/")
 
 	b = []byte(jsonStrArry)
