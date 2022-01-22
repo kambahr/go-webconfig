@@ -58,7 +58,7 @@ func LoadJSONConfig(path string) (map[string]interface{}, []byte)
             # notes for this key
             "some-array" :
             [
-                "value 1",
+                "value 1",  # inline comment will also be omitted
                 /* more notes */
                 "value 2"
             ]
