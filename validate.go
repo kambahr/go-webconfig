@@ -15,20 +15,28 @@ func (c *Config) ValidateHTTPRequest(w http.ResponseWriter, r *http.Request) (bo
 	rPath := strings.ToLower(r.URL.Path)
 
 	// Host name
-	rHost := strings.ToLower(strings.Split(r.Host, ":")[0])
-	if c.Site.HostName != "" && rHost != c.Site.HostName && rHost != "localhost" && rHost != "127.0.0.1" {
+	if c.ValidateRemoteHost {
+		rHost := strings.ToLower(strings.Split(r.Host, ":")[0])
 
-		// Also check the alternate host names
-		ok := false
-		for i := 0; i < len(c.Site.AlternateHostNames); i++ {
-			if c.Site.AlternateHostNames[i] == rHost {
-				ok = true
-				break
+		// Do not exclude loadhost or loopback ip addr; as the remote host can be
+		// altered as anything ["HTTP Host header attack"]:
+		// For example,
+		//    the following could go through with no problems, if not dealt with:
+		//    curl -X GET -H "Host:127.0.0.1" "https://your-good-domain-name.com/"
+		if c.Site.HostName != "" && rHost != c.Site.HostName /*&& rHost != "localhost" && rHost != "127.0.0.1"*/ {
+
+			// Also check the alternate host names
+			ok := false
+			for i := 0; i < len(c.Site.AlternateHostNames); i++ {
+				if c.Site.AlternateHostNames[i] == rHost {
+					ok = true
+					break
+				}
 			}
-		}
 
-		if !ok {
-			return false, http.StatusBadGateway
+			if !ok {
+				return false, http.StatusBadGateway
+			}
 		}
 	}
 
@@ -45,7 +53,7 @@ func (c *Config) ValidateHTTPRequest(w http.ResponseWriter, r *http.Request) (bo
 		return false, http.StatusMethodNotAllowed
 	}
 
-	// This is the order: restrict-paths, exclude-path, forward-paths, conditional-http-service
+	// This is the order of: restrict-paths, exclude-path, forward-paths, conditional-http-service
 
 	// restrict-paths
 	for i := 0; i < len(c.URLPaths.Restrict); i++ {

@@ -106,6 +106,12 @@ type Config struct {
 	Site               site      `json:"site"`
 	URLPaths           urlPaths  `json:"url-paths"`
 
+	// This is to prevent "HTTP Host header attack",
+	// however, it may cause problems if the webiste is
+	// running behind a load-balancer and/or a security
+	// program that monitors http requests.
+	ValidateRemoteHost bool
+
 	// These are the offender IP addr. Their connections
 	// are drop immediately, without any message returned to them.
 	BlockedIP []string `json:"blocked-ip"`
