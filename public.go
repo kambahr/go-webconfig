@@ -104,7 +104,7 @@ func (c *Config) getData(line []string) {
 		// account for multi-spaces between key and value.
 		for j := 1; j < len(v); j++ {
 			if v[j] != "" {
-				val = fmt.Sprintf("%s%s", val, v[j])
+				val = fmt.Sprintf("%s %s", val, v[j])
 			}
 		}
 		c.Data[key] = val
@@ -255,13 +255,14 @@ func (c *Config) GetConfig() {
 // parent is the name of the section (header). it should be blank, if
 // if there is not section name.
 // e.g.
-//   The following has no parent.
-// 		hostname         localhost
 //
-//   and this one has a parent name and key/value
-//       TLS
-//          cert /usr/local/mydomain/appdata/tls/certx.pem
-//          key /usr/local/mydomain/appdata/tls/keyx.pem
+//	  The following has no parent.
+//			hostname         localhost
+//
+//	  and this one has a parent name and key/value
+//	      TLS
+//	         cert /usr/local/mydomain/appdata/tls/certx.pem
+//	         key /usr/local/mydomain/appdata/tls/keyx.pem
 func (c *Config) UpdateConfigValue(parent string, key string, newValue string) {
 
 	f, err := ReadFile(c.ConfigFilePath)
