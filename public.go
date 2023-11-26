@@ -133,7 +133,7 @@ func (c *Config) GetConfig() {
 
 	// Begin with a blank line. If the frist section is on the first line,
 	// it may be skipped.
-	if linex[0] != "" && linex[0] != "#" {
+	if len(linex) > 0 && linex[0] != "" && linex[0] != "#" {
 		line = append(line, "")
 	}
 
